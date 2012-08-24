@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<GarbageCan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <FilterList>
+    <Filter>
+      <Name>Omniworks</Name>
+      <RegularExpression>^diff__dir$</RegularExpression>
+      <Include />
+      <Exclude />
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>false</ContainDirectory>
+      <IsChecked>true</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>MSTest Result</Name>
+      <RegularExpression>^TestResults$</RegularExpression>
+      <Include />
+      <Exclude />
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>false</ContainDirectory>
+      <IsChecked>true</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>Resharper</Name>
+      <RegularExpression>(^_resharper\.|\.resharper\.user$)</RegularExpression>
+      <Include />
+      <Exclude />
+      <ContainFile>true</ContainFile>
+      <ContainDirectory>false</ContainDirectory>
+      <IsChecked>true</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>Symbol</Name>
+      <RegularExpression>\.pdb$</RegularExpression>
+      <Include />
+      <Exclude>D:\NotBackedUp\symcache</Exclude>
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>false</ContainDirectory>
+      <IsChecked>false</IsChecked>
+    </Filter>
+  </FilterList>
+</GarbageCan>
