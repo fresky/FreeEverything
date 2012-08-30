@@ -9,17 +9,29 @@ namespace FreeEverything.Model
         {
             Path = path;
             Size = -1;
+            IsChecked = true;
         }
         public string Path { get; private set; }
         public double Size { get; private set; }
+
+        public bool IsChecked { get; set; }
+
+        public string Display { get { return ToString(); }
+        }
         public override string ToString()
         {
-            return (Size<0? string.Empty: (Size+"\t")) + Path;
+            return GarbageCan.GetSizeString(Size) + Path;
         }
+
         public void CalculateSize()
         {
             if(Directory.Exists(Path))
-                Size = new DirectoryInfo(Path).GetFiles(Path, SearchOption.AllDirectories).Aggregate<FileInfo, double>(0, (current, file) => current + file.Length);
+            {
+                double result = 0;
+                foreach (FileInfo file in new DirectoryInfo(Path).GetFiles("*", SearchOption.AllDirectories))
+                    result = result + file.Length;
+                Size = result;
+            }
             else if (File.Exists(Path))
             {
                 Size = new FileInfo(Path).Length;

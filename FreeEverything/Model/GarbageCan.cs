@@ -22,6 +22,7 @@ namespace FreeEverything.Model
         }
         public ObservableCollection<Filter> FilterList { get; set; }
 
+        
         public void AddEmptyFilter()
         {
             FilterList.Add(new Filter());
@@ -55,7 +56,22 @@ namespace FreeEverything.Model
                         if (isFile == filter.ContainFile && isFolder == filter.ContainDirectory)
                         {
                             EverythingWraper.Everything_GetResultFullPathName(i, buf, bufsize);
-                            m_GarbageList.Add(new Garbage(buf.ToString()));
+                            string path = buf.ToString();
+                            if (!String.IsNullOrEmpty(filter.Include))
+                            {
+                                if (!path.Contains(filter.Include))
+                                {
+                                    break;
+                                }
+                            }
+                            if (!String.IsNullOrEmpty(filter.Exclude))
+                            {
+                                if (path.Contains(filter.Exclude))
+                                {
+                                    break;
+                                }
+                            }
+                            m_GarbageList.Add(new Garbage(path));
                         }
                     }
                 }
@@ -72,7 +88,37 @@ namespace FreeEverything.Model
 
         public void Free()
         {
-            throw new NotImplementedException();
+            for (int i = m_GarbageList.Count-1; i >= 0; i--)
+            {
+                if(m_GarbageList[i].IsChecked)
+                {
+                    try
+                    {
+                        File.Delete(m_GarbageList[i].Path);
+                        m_GarbageList.RemoveAt(i);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
+        public static string GetSizeString(double size)
+        {
+            if (size*10>=1024*1024*1024)
+            {
+                return String.Format("{0} {1}\t\t", (size / (1024 * 1024*1024)).ToString("F1"), "G");
+            }
+            if (size*10>=1024*1024)
+            {
+                return String.Format("{0} {1}\t\t", (size / (1024 * 1024)).ToString("F1"), "M");
+            }
+            if (size*10 >= 1024)
+            {
+                return String.Format("{0} {1}\t\t", (size / 1024).ToString("F1"), "K");
+            }
+            return (size < 0 ? "\t\t" : (size.ToString("F1") + " B\t"));
         }
     }
 }

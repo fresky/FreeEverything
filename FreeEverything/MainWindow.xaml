@@ -1,4 +1,4 @@
-﻿<Window x:Class="FreeEverything.MainWindow"
+﻿<Window Name="FreeEverything"  x:Class="FreeEverything.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -50,11 +50,24 @@
         <TextBox Text="{Binding FilterRegular}"  HorizontalAlignment="Left" Height="23" Margin="481,59,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287"/>
         <TextBox Text="{Binding FilterInclude}"  HorizontalAlignment="Left" Height="23" Margin="481,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287"/>
         <TextBox Text="{Binding FilterExclude}"  HorizontalAlignment="Left" Height="23" Margin="481,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287"/>
-        <CheckBox IsChecked="{Binding FilterContainDirectory}" Content="Directory" HorizontalAlignment="Left" Margin="406,201,0,0" VerticalAlignment="Top"/>
         <CheckBox IsChecked="{Binding FilterContainFile}" Content="File" HorizontalAlignment="Left" Margin="490,201,0,0" VerticalAlignment="Top"/>
+        <CheckBox IsChecked="{Binding FilterContainDirectory}" Content="Directory" HorizontalAlignment="Left" Margin="406,201,0,0" VerticalAlignment="Top"/>
         <Button Command="{Binding Scan}"  Content="Scan" HorizontalAlignment="Left" Margin="10,240,0,0"  VerticalAlignment="Top" Width="75"/>
         <Button Command="{Binding CalculateSize}"  Content="Calculate Size" HorizontalAlignment="Left" Margin="90,240,0,0" VerticalAlignment="Top" Width="93"/>
         <Button Command="{Binding Free}" Content="Free" HorizontalAlignment="Left" Margin="693,240,0,0" VerticalAlignment="Top" Width="75"/>
-        <ListBox ItemsSource="{Binding GarbageList}"  HorizontalAlignment="Left" Height="293" Margin="10,267,0,0"  VerticalAlignment="Top" Width="758" />
+        <ListBox ItemsSource="{Binding GarbageList}"  HorizontalAlignment="Left" Height="293" Margin="10,267,0,0"  VerticalAlignment="Top" Width="758" >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding IsChecked}"/>
+                        <TextBlock Text="{Binding Display}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Label Content="Count:" HorizontalAlignment="Left" Margin="188,241.04,0,0" VerticalAlignment="Top"/>
+        <TextBox  Text="{Binding GarbageCount}" HorizontalAlignment="Left" Height="23" Margin="237.707,240,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Size:" HorizontalAlignment="Left" Margin="376,241.04,0,0" VerticalAlignment="Top"/>
+        <TextBox Text="{Binding TotalSize}" HorizontalAlignment="Left" Height="23" Margin="418.993,243.04,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>

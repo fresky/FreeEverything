@@ -2,6 +2,9 @@ namespace FreeEverything.Model
 {
     public class Filter
     {
+        private string m_Include;
+        private string m_Exclude;
+
         public Filter()
         {
             Name = "Filter Name";
@@ -13,8 +16,32 @@ namespace FreeEverything.Model
         }
         public string Name { get; set; }
         public string RegularExpression { get; set; }
-        public string Include { get; set; }
-        public string Exclude { get; set; }
+
+        public string Include
+        {
+            get { return m_Include; }
+            set
+            {
+                m_Include = value;
+                if (!string.IsNullOrEmpty(m_Include))
+                {
+                    m_Include = m_Include.EndsWith("\\") ? m_Include : m_Include + "\\";
+                }
+            }
+        }
+
+        public string Exclude
+        {
+            get { return m_Exclude; }
+            set
+            {
+                m_Exclude = value;
+                if (!string.IsNullOrEmpty(m_Exclude))
+                {
+                    m_Exclude = m_Include.EndsWith("\\") ? m_Exclude : m_Exclude + "\\";
+                }
+            }
+        }
         public bool ContainFile { get; set; }
         public bool ContainDirectory { get; set; }
 

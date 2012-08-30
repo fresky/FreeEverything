@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 using System.Xml.Serialization;
 using GalaSoft.MvvmLight;
 using FreeEverything.Model;
@@ -27,7 +29,7 @@ namespace FreeEverything.ViewModel
         private string m_FilterInclude;
         private string m_FilterExclude;
         private bool m_FilterContainFile;
-        private bool m_FilterContainDirectory;
+        private bool m_FilterContainContainDirectory;
         private ObservableCollection<Garbage> m_GarbageList;
         private const string GarbagecanXML = "GarbageCan.xml";
 
@@ -62,7 +64,6 @@ namespace FreeEverything.ViewModel
         public RelayCommand CalculateSize { get; private set; }
         public RelayCommand Free { get; private set; }
 
-
         private void closedCommand(EventArgs e)
         {
             saveGarbageCan(m_GarbageCan);
@@ -92,7 +93,8 @@ namespace FreeEverything.ViewModel
         private void calculateSize()
         {
             m_GarbageCan.CalculateSize();
-            RaisePropertyChanged("GarbageList");
+            GarbageList = new ObservableCollection<Garbage>();
+            GarbageList = m_GarbageCan.GetGarbageList();
         }
 
         private void free()
@@ -124,18 +126,20 @@ namespace FreeEverything.ViewModel
                 m_FilterContainFile = m_SelectedFilter.ContainFile;
                 RaisePropertyChanged("FilterContainFile");
 
-                m_FilterContainDirectory = m_SelectedFilter.ContainDirectory;
-                RaisePropertyChanged("FilterContainDirectory");                
+                m_FilterContainContainDirectory = m_SelectedFilter.ContainDirectory;
+                RaisePropertyChanged("FilterContainDirectory");   
+             
+                
             }
         }
 
-        protected bool FilterContainDirectory
+        public bool FilterContainDirectory
         {
-            get { return m_FilterContainDirectory; }
+            get { return m_FilterContainContainDirectory; }
             set
             {
-                m_FilterContainDirectory = value;
-                m_SelectedFilter.ContainDirectory = m_FilterContainDirectory;
+                m_FilterContainContainDirectory = value;
+                m_SelectedFilter.ContainDirectory = m_FilterContainContainDirectory;
                 
             }
         }
@@ -188,7 +192,9 @@ namespace FreeEverything.ViewModel
             {
                 m_FilterName = value;
                 m_SelectedFilter.Name = m_FilterName;
+                FilterList = m_GarbageCan.FilterList;
                 RaisePropertyChanged("FilterList");
+                RaisePropertyChanged("SelectedFilter");
             }
         }
 
@@ -199,9 +205,22 @@ namespace FreeEverything.ViewModel
             {
                 m_GarbageList = value;
                 RaisePropertyChanged("GarbageList");
+                GarbageCount = m_GarbageList.Count;
+                RaisePropertyChanged("GarbageCount");
+                double size = 0;
+                foreach (var garbage in m_GarbageList)
+                {
+
+                    size += garbage.Size>=0?garbage.Size:0;
+                }
+                TotalSize = GarbageCan.GetSizeString(size);
+                RaisePropertyChanged("TotalSize");
             }
         }
 
+        public int GarbageCount { get; set; }
+
+        public string TotalSize { get; set; }
 
         private void saveGarbageCan(GarbageCan can)
         {
