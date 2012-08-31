@@ -94,7 +94,7 @@ namespace FreeEverything.Model
                 {
                     try
                     {
-                        File.Delete(m_GarbageList[i].Path);
+                        deletePath(m_GarbageList[i].Path);
                         m_GarbageList.RemoveAt(i);
                     }
                     catch
@@ -104,6 +104,40 @@ namespace FreeEverything.Model
             }
         }
 
+        private static void deletePath(string path)
+        {
+            FileSystemInfo fsi;
+            if (File.Exists(path))
+            {
+                fsi = new FileInfo(path);
+            }
+            else if (Directory.Exists(path))
+            {
+                fsi = new DirectoryInfo(path);
+
+            }
+            else
+            {
+                return;
+            }
+            deleteFileSystemInfo(fsi);
+        }
+        private static void deleteFileSystemInfo(FileSystemInfo fsi)
+        {
+
+            fsi.Attributes = FileAttributes.Normal;
+            var di = fsi as DirectoryInfo;
+
+            if (di != null)
+            {
+                foreach (var dirInfo in di.GetFileSystemInfos())
+                {
+                    deleteFileSystemInfo(dirInfo);
+                }
+            }
+
+            fsi.Delete();
+        }
         public static string GetSizeString(double size)
         {
             if (size*10>=1024*1024*1024)
