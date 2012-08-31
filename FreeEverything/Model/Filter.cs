@@ -23,10 +23,7 @@ namespace FreeEverything.Model
             set
             {
                 m_Include = value;
-                if (!string.IsNullOrEmpty(m_Include))
-                {
-                    m_Include = m_Include.EndsWith("\\") ? m_Include : m_Include + "\\";
-                }
+                formatDirectory(m_Include);
             }
         }
 
@@ -36,12 +33,20 @@ namespace FreeEverything.Model
             set
             {
                 m_Exclude = value;
-                if (!string.IsNullOrEmpty(m_Exclude))
-                {
-                    m_Exclude = m_Include.EndsWith("\\") ? m_Exclude : m_Exclude + "\\";
-                }
+                formatDirectory(m_Exclude);
             }
         }
+
+        private void formatDirectory(string path)
+        {
+            while (path.EndsWith("\\"))
+                path = path.Remove(path.Length - 1);
+            if (!string.IsNullOrEmpty(path))
+            {
+                m_Exclude = path.EndsWith("\\") ? path : (path + "\\");
+            }
+        }
+
         public bool ContainFile { get; set; }
         public bool ContainDirectory { get; set; }
 

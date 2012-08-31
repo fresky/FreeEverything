@@ -1,4 +1,4 @@
-﻿<Window Name="FreeEverything"  x:Class="FreeEverything.MainWindow"
+﻿<Window x:Class="FreeEverything.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,6 +9,7 @@
         Height="600"
         Width="800"
         Title="FreeEverything"
+        ResizeMode="NoResize"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     
     <Window.Resources>
