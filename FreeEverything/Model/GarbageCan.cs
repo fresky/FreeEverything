@@ -51,28 +51,32 @@ namespace FreeEverything.Model
                     int totalNumber = EverythingWraper.Everything_GetNumResults();
                     for (int i = 0; i < totalNumber; i++)
                     {
-                        bool isFolder = EverythingWraper.Everything_IsFolderResult(i);
-                        bool isFile = EverythingWraper.Everything_IsFileResult(i);
-                        if (isFile == filter.ContainFile && isFolder == filter.ContainDirectory)
+                        if (EverythingWraper.Everything_IsFolderResult(i) && !filter.ContainDirectory)
                         {
-                            EverythingWraper.Everything_GetResultFullPathName(i, buf, bufsize);
-                            string path = buf.ToString();
-                            if (!String.IsNullOrEmpty(filter.Include))
-                            {
-                                if (!path.Contains(filter.Include))
-                                {
-                                    break;
-                                }
-                            }
-                            if (!String.IsNullOrEmpty(filter.Exclude))
-                            {
-                                if (path.Contains(filter.Exclude))
-                                {
-                                    break;
-                                }
-                            }
-                            m_GarbageList.Add(new Garbage(path));
+                            continue;
                         }
+                        if( EverythingWraper.Everything_IsFileResult(i) && !filter.ContainFile)
+                        {
+                            continue;
+                        }
+
+                        EverythingWraper.Everything_GetResultFullPathName(i, buf, bufsize);
+                        string path = buf.ToString();
+                        if (!String.IsNullOrEmpty(filter.Include))
+                        {
+                            if (!path.Contains(filter.Include))
+                            {
+                                break;
+                            }
+                        }
+                        if (!String.IsNullOrEmpty(filter.Exclude))
+                        {
+                            if (path.Contains(filter.Exclude))
+                            {
+                                break;
+                            }
+                        }
+                        m_GarbageList.Add(new Garbage(path));
                     }
                 }
             }
