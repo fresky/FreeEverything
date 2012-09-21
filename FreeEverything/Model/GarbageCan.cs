@@ -66,14 +66,14 @@ namespace FreeEverything.Model
                         {
                             if (!path.Contains(filter.Include))
                             {
-                                break;
+                                continue;
                             }
                         }
                         if (!String.IsNullOrEmpty(filter.Exclude))
                         {
                             if (path.Contains(filter.Exclude))
                             {
-                                break;
+                                continue;
                             }
                         }
                         m_GarbageList.Add(new Garbage(path));
@@ -139,7 +139,6 @@ namespace FreeEverything.Model
                     deleteFileSystemInfo(dirInfo);
                 }
             }
-
             fsi.Delete();
         }
         public static string GetSizeString(double size)
