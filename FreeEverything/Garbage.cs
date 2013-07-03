@@ -1,7 +1,6 @@
 using System.IO;
-using System.Linq;
 
-namespace FreeEverything.Model
+namespace FreeEverything
 {
     public class Garbage
     {
@@ -20,7 +19,7 @@ namespace FreeEverything.Model
         }
         public override string ToString()
         {
-            return GarbageCan.GetSizeString(Size) + Path;
+            return FileHandler.GetSizeString(Size) + Path;
         }
 
         public void CalculateSize()

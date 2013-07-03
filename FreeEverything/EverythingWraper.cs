@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace FreeEverything.Model
+namespace FreeEverything
 {
     
     public class EverythingWraper
@@ -79,33 +79,6 @@ namespace FreeEverything.Model
         [DllImport(@"ThirdParty\Everything.dll")]
         public static extern void Everything_Reset();
 
-        public static string Search(string keyword)
-        {
-            Everything_SetSearch(keyword);
-
-            // use our own custom scrollbar... 			
-            // Everything_SetMax(listBox1.ClientRectangle.Height / listBox1.ItemHeight);
-            // Everything_SetOffset(VerticalScrollBarPosition...);
-
-            // execute the query
-            Everything_Query();
-
-            // sort by path
-            // Everything_SortResultsByPath();
-
-            int bufsize = 260;
-            StringBuilder buf = new StringBuilder(bufsize);
-
-            // loop through the results, adding each result to the listbox.
-            if(Everything_GetNumResults()>0)
-            {
-                // get the result's full path and file name.
-                Everything_GetResultFullPathName(0, buf, bufsize);	
-                
-            }
-            return buf.ToString();
-        }
-
         private static bool m_EverythingLaunch;
         public static void StartEverything()
         {
@@ -122,9 +95,11 @@ namespace FreeEverything.Model
             }
             if (!found)
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(@"ThirdParty\Everything.exe");
-                processStartInfo.CreateNoWindow = true;
-                processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(@"ThirdParty\Everything.exe")
+                    {
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    };
                 Process.Start(processStartInfo);
                 m_EverythingLaunch = true;
             }
