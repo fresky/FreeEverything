@@ -154,7 +154,7 @@ namespace FreeEverything
                         EverythingWraper.Everything_SetRegex(true);
                         EverythingWraper.Everything_SetSearch(filter.RegularExpression);
 
-                        EverythingWraper.Everything_Query();
+                        EverythingWraper.Everything_Query(true);
 
                         // sort by path
                         EverythingWraper.Everything_SortResultsByPath();

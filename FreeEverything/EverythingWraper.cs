@@ -50,8 +50,8 @@ namespace FreeEverything
         [DllImport(@"ThirdParty\Everything.dll")]
         public static extern int Everything_GetLastError();
 
-        [DllImport(@"ThirdParty\Everything.dll")]
-        public static extern bool Everything_Query();
+        [DllImport(@"ThirdParty\Everything.dll" )]
+        public static extern bool Everything_Query(bool bWait);
 
         [DllImport(@"ThirdParty\Everything.dll")]
         public static extern void Everything_SortResultsByPath();
