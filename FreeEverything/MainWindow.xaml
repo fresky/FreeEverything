@@ -8,33 +8,75 @@
         Loaded="MainWindow_OnLoaded"
         Closed="MainWindow_OnClosed"
         >
+    <Window.Resources>
+        <!-- Style for AJAX-like wait spinners -->
+        <Style x:Key="WaitSpinnerStyle" TargetType="Control">
+            <Setter Property="Foreground" Value="#888" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Control">
+                        <Viewbox Visibility="{TemplateBinding Visibility}">
+                            <Canvas RenderTransformOrigin="0.5,0.5" Width="120" Height="120" >
+                                <Ellipse Width="21.835" Height="21.862" Canvas.Left="20.1696" Canvas.Top="9.76358" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="1.0"/>
+                                <Ellipse Width="20.835" Height="20.862" Canvas.Left="2.86816" Canvas.Top="29.9581" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.9"/>
+                                <Ellipse Width="19.835" Height="19.862" Canvas.Left="0.00001" Canvas.Top="57.9341" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.8"/>
+                                <Ellipse Width="17.835" Height="17.862" Canvas.Left="12.1203" Canvas.Top="83.3163" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.7"/>
+                                <Ellipse Width="16.835" Height="16.862" Canvas.Left="36.5459" Canvas.Top="98.1380" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.6"/>
+                                <Ellipse Width="14.835" Height="14.862" Canvas.Left="64.6723" Canvas.Top="96.8411" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.5"/>
+                                <Ellipse Width="13.835" Height="13.862" Canvas.Left="87.6176" Canvas.Top="81.2783" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.4"/>
+                                <Ellipse Width="12.835" Height="12.862" Canvas.Left="98.165"  Canvas.Top="54.4140" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.3"/>
+                                <Ellipse Width="11.835" Height="11.862" Canvas.Left="92.9838" Canvas.Top="26.9938" Stretch="Fill" Fill="{TemplateBinding Foreground}" Opacity="0.2"/>
+                                <Canvas.RenderTransform>
+                                    <RotateTransform x:Name="SpinnerRotate" Angle="0" />
+                                </Canvas.RenderTransform>
+                                <Canvas.Triggers>
+                                    <EventTrigger RoutedEvent="ContentControl.Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                            Storyboard.TargetName="SpinnerRotate"
+                                            Storyboard.TargetProperty="Angle"
+                                            From="0" To="360" Duration="0:0:01.3"
+                                            RepeatBehavior="Forever" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Canvas.Triggers>
+                            </Canvas>
+                        </Viewbox>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
-    <Grid>       
-        <ListBox SelectedItem="{Binding SelectedFilter}"  ItemsSource="{Binding FilterList}"  HorizontalAlignment="Left" Height="194" Margin="10,14,0,0" VerticalAlignment="Top" Width="366" SelectionChanged="Selector_OnSelectionChanged">
+    <Grid>
+        <ListBox SelectedItem="{Binding SelectedFilter}"  ItemsSource="{Binding FilterList}"  HorizontalAlignment="Left" Height="221" Margin="10,14,0,0" VerticalAlignment="Top" Width="311" SelectionChanged="Selector_OnSelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
+                    <DockPanel Width="300" >
                         <CheckBox IsChecked="{Binding IsChecked}"/>
                         <TextBlock Text="{Binding Name}"></TextBlock>
-                    </StackPanel>
+                        <Control Visibility="{Binding Waiting}" HorizontalAlignment="Right" Style="{StaticResource WaitSpinnerStyle}" Width="15" Foreground="Green" />
+                    </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Label Content="Name:" HorizontalAlignment="Left" Margin="406,14,0,0" VerticalAlignment="Top"/>
-        <Label Content="Filter:" HorizontalAlignment="Left" Margin="406,59,0,0" VerticalAlignment="Top"/>
-        <Label Content="Include:" HorizontalAlignment="Left" Margin="406,106,0,0" VerticalAlignment="Top"/>
-        <Label Content="Exclude:" HorizontalAlignment="Left" Margin="406,154,0,0" VerticalAlignment="Top"/>
-        <Button Click="New_OnClick" Content="New" HorizontalAlignment="Left" Margin="10,213,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox Text="{Binding FilterName}"  HorizontalAlignment="Left" Height="23" Margin="481,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287"/>
-        <TextBox Text="{Binding FilterRegular}"  HorizontalAlignment="Left" Height="23" Margin="481,59,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287"/>
-        <TextBox Text="{Binding FilterInclude}"  HorizontalAlignment="Left" Height="23" Margin="481,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287"/>
-        <TextBox Text="{Binding FilterExclude}"  HorizontalAlignment="Left" Height="23" Margin="481,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287"/>
-        <CheckBox IsChecked="{Binding FilterContainFile}" Content="File" HorizontalAlignment="Left" Margin="490,201,0,0" VerticalAlignment="Top"/>
-        <CheckBox IsChecked="{Binding FilterContainDirectory}" Content="Directory" HorizontalAlignment="Left" Margin="406,201,0,0" VerticalAlignment="Top"/>
-        <Button Click="Scan_OnClick"  Content="Scan" HorizontalAlignment="Left" Margin="10,240,0,0"  VerticalAlignment="Top" Width="75"/>
-        <Button Click="CalculateSize_OnClick"  Content="Calculate Size" HorizontalAlignment="Left" Margin="90,240,0,0" VerticalAlignment="Top" Width="93"/>
-        <Button Click="Free_OnClick" Content="Free" HorizontalAlignment="Left" Margin="693,240,0,0" VerticalAlignment="Top" Width="75"/>
-        <ListBox ItemsSource="{Binding GarbageList}"  HorizontalAlignment="Left" Height="293" Margin="10,267,0,0"  VerticalAlignment="Top" Width="758" >
+        <Label Content="Name:" HorizontalAlignment="Left" Margin="341,13,0,0" VerticalAlignment="Top"/>
+        <Label Content="Filter:" HorizontalAlignment="Left" Margin="341,55,0,0" VerticalAlignment="Top"/>
+        <Label Content="Include:" HorizontalAlignment="Left" Margin="341,95,0,0" VerticalAlignment="Top"/>
+        <Label Content="Exclude:" HorizontalAlignment="Left" Margin="341,138,0,0" VerticalAlignment="Top"/>
+        <Button Click="New_OnClick" Content="New" HorizontalAlignment="Left" Margin="629,213,0,0" VerticalAlignment="Top" Width="61"/>
+        <TextBox Text="{Binding FilterName}"  HorizontalAlignment="Left" Height="23" Margin="416,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="354"/>
+        <TextBox Text="{Binding FilterRegular}"  HorizontalAlignment="Left" Height="23" Margin="416,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="354"/>
+        <TextBox Text="{Binding FilterInclude}"  HorizontalAlignment="Left" Height="23" Margin="416,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="354"/>
+        <TextBox Text="{Binding FilterExclude}"  HorizontalAlignment="Left" Height="23" Margin="416,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="354"/>
+        <CheckBox IsChecked="{Binding FilterContainFile}" Content="File" HorizontalAlignment="Left" Margin="434,186,0,0" VerticalAlignment="Top"/>
+        <CheckBox IsChecked="{Binding FilterContainDirectory}" Content="Directory" HorizontalAlignment="Left" Margin="346,186,0,0" VerticalAlignment="Top"/>
+        <Button Click="Scan_OnClick"  Content="Scan" HorizontalAlignment="Left" Margin="346,213,0,0"  VerticalAlignment="Top" Width="75"/>
+        <Button Click="CalculateSize_OnClick"  Content="Calculate Size" HorizontalAlignment="Left" Margin="434,213,0,0" VerticalAlignment="Top" Width="93"/>
+        <Button Click="Free_OnClick" Content="Free" HorizontalAlignment="Left" Margin="346,240,0,0" VerticalAlignment="Top" Width="75"/>
+        <ListBox ItemsSource="{Binding GarbageList}"  HorizontalAlignment="Left" Height="287" Margin="10,273,0,0"  VerticalAlignment="Top" Width="760" >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -44,10 +86,17 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Label Content="Count:" HorizontalAlignment="Left" Margin="188,241.04,0,0" VerticalAlignment="Top"/>
-        <TextBox  Text="{Binding GarbageCount, Mode=OneWay}" HorizontalAlignment="Left" Height="23" Margin="237.707,240,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label Content="Size:" HorizontalAlignment="Left" Margin="376,241.04,0,0" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding TotalSize, Mode=OneWay}" HorizontalAlignment="Left" Height="23" Margin="418.993,243.04,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Delete" HorizontalAlignment="Left" Margin="90,213,0,0" VerticalAlignment="Top" Width="93" Click="Delete_Click"/>
+        <Label Content="Count:" HorizontalAlignment="Left" Margin="10,242,0,0" VerticalAlignment="Top"/>
+        <TextBox  Text="{Binding GarbageCount, Mode=OneWay}" HorizontalAlignment="Left" Height="23" Margin="60,241,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63"/>
+        <Label Content="Size:" HorizontalAlignment="Left" Margin="138,240,0,0" VerticalAlignment="Top" Width="40"/>
+        <TextBox Text="{Binding TotalSize, Mode=OneWay}" HorizontalAlignment="Left" Height="23" Margin="183,242,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138"/>
+        <Button Content="Delete" HorizontalAlignment="Left" Margin="695,213,0,0" VerticalAlignment="Top" Width="75" Click="Delete_Click"/>
+        <ProgressBar Maximum="100" Minimum="0" Value="{Binding Progress}" IsIndeterminate="False" HorizontalAlignment="Left" Height="20" Margin="434,242,0,0" VerticalAlignment="Top" Width="230"/>
+        <Button Content="TestProgress" HorizontalAlignment="Left" Margin="503,186,0,0" VerticalAlignment="Top" Width="75" Click="TestProgress_Click"/>
+        <Label Content="Time:" HorizontalAlignment="Left" Margin="669,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.447,0.577"/>
+        <TextBox Text="{Binding ElapseTime}" HorizontalAlignment="Left" Height="23" Margin="712,242,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58"/>
+        <Control Visibility="{Binding TestWait}" HorizontalAlignment="Right" Style="{StaticResource WaitSpinnerStyle}" Width="15" Foreground="Green" RenderTransformOrigin="-18.8,0.584" Margin="0,-90,184,90" />
     </Grid>
+
+
 </Window>

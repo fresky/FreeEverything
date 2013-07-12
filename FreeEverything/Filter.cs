@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace FreeEverything
 {
@@ -17,6 +18,7 @@ namespace FreeEverything
             Exclude = String.Empty;
             ContainFile = false;
             ContainDirectory = false;
+            Waiting = Visibility.Collapsed;
         }
         public string Name { get; set; }
         public string RegularExpression { get; set; }
@@ -61,6 +63,9 @@ namespace FreeEverything
         public bool ContainDirectory { get; set; }
 
         public bool IsChecked { get; set; }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public Visibility Waiting { get; set; }
 
         public override string ToString()
         {

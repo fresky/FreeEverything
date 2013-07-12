@@ -1,7 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 using System.Xml.Serialization;
 
 namespace FreeEverything
@@ -79,6 +84,11 @@ namespace FreeEverything
         {
             m_GarbageCan.FilterList.Remove(m_GarbageCan.SelectedFilter);
             m_GarbageCan.SelectedFilter = m_GarbageCan.FilterList[0];
+        }
+
+        private void TestProgress_Click(object sender, RoutedEventArgs e)
+        {
+            m_GarbageCan.TestProgress();           
         }
     }
 }

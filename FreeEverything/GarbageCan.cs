@@ -1,9 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using FreeEverything.Annotations;
 
 namespace FreeEverything
@@ -24,7 +30,10 @@ namespace FreeEverything
         public GarbageCan()
         {
             FilterList = new ObservableCollection<Filter>();
+            TestWait = Visibility.Collapsed;
+            OnPropertyChanged("TestWait");
         }
+
         public ObservableCollection<Filter> FilterList { get; private set; }
 
         [System.Xml.Serialization.XmlIgnore]
@@ -144,55 +153,69 @@ namespace FreeEverything
         {
             try
             {
+                startTimer();
                 GarbageList.Clear();
                 OnPropertyChanged("GarbageCount");
                 foreach (var filter in FilterList)
                 {
                     if (filter.IsChecked)
                     {
-                        //EverythingWraper.Everything_Reset();
-                        EverythingWraper.Everything_SetRegex(true);
-                        EverythingWraper.Everything_SetSearch(filter.RegularExpression);
-
-                        EverythingWraper.Everything_Query(true);
-
-                        // sort by path
-                        EverythingWraper.Everything_SortResultsByPath();
-
-                        int bufsize = 260;
-                        StringBuilder buf = new StringBuilder(bufsize);
-
-                        // loop through the results, adding each result to the list box.
-                        int totalNumber = EverythingWraper.Everything_GetNumResults();
-                        for (int i = 0; i < totalNumber; i++)
-                        {
-                            if (EverythingWraper.Everything_IsFolderResult(i) && !filter.ContainDirectory)
-                            {
-                                continue;
-                            }
-                            if (EverythingWraper.Everything_IsFileResult(i) && !filter.ContainFile)
-                            {
-                                continue;
-                            }
-
-                            EverythingWraper.Everything_GetResultFullPathName(i, buf, bufsize);
-                            string path = buf.ToString();
-
-                            if (filter.ShouldSkip(path))
-                            {
-                                continue;
-                            }
-
-                            Garbage garbage = new Garbage(path);
-                            GarbageList.Add(garbage);
-                            OnPropertyChanged("GarbageList");
-                            OnPropertyChanged("GarbageCount");
-                        }
+                        filter.Waiting = Visibility.Visible;
+                        OnPropertyChanged("Waiting");
+                        ScanByEverything(filter);
+                        filter.Waiting = Visibility.Collapsed;
+                        OnPropertyChanged("Waiting");
                     }
                 }
             }
             catch (Exception)
             {
+            }
+            finally
+            {
+                stopTimer();
+            }
+        }
+
+        private void ScanByEverything(Filter filter)
+        {
+
+            EverythingWraper.Everything_SetRegex(true);
+            EverythingWraper.Everything_SetSearch(filter.RegularExpression);
+
+            EverythingWraper.Everything_Query(true);
+
+            // sort by path
+            EverythingWraper.Everything_SortResultsByPath();
+
+            int bufsize = 260;
+            StringBuilder buf = new StringBuilder(bufsize);
+
+            // loop through the results, adding each result to the list box.
+            int totalNumber = EverythingWraper.Everything_GetNumResults();
+            for (int i = 0; i < totalNumber; i++)
+            {
+                if (EverythingWraper.Everything_IsFolderResult(i) && !filter.ContainDirectory)
+                {
+                    continue;
+                }
+                if (EverythingWraper.Everything_IsFileResult(i) && !filter.ContainFile)
+                {
+                    continue;
+                }
+
+                EverythingWraper.Everything_GetResultFullPathName(i, buf, bufsize);
+                string path = buf.ToString();
+
+                if (filter.ShouldSkip(path))
+                {
+                    continue;
+                }
+
+                Garbage garbage = new Garbage(path);
+                GarbageList.Add(garbage);
+                OnPropertyChanged("GarbageList");
+                OnPropertyChanged("GarbageCount");
             }
         }
 
@@ -238,6 +261,69 @@ namespace FreeEverything
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
                 handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        [System.Xml.Serialization.XmlIgnore]
+        public int Progress { get; private set; }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public string ElapseTime { get; private set; }
+
+        [System.Xml.Serialization.XmlIgnore]
+
+        public Visibility TestWait { get; private set; }
+        public void TestProgress()
+        {
+            startTimer();
+            TestWait = Visibility.Visible;
+            OnPropertyChanged("TestWait");
+
+            Task.Factory.StartNew(() =>
+                {
+                    for (int i = 1; i <= 100; i++)
+                    {
+                        int i1 = i;
+                        Task.Factory.StartNew(() => Thread.Sleep(300)).ContinueWith((antecedent) =>
+                            {
+                                Progress++;
+                                OnPropertyChanged("Progress");
+                            }, TaskContinuationOptions.AttachedToParent);
+                    }
+                }).ContinueWith(t =>
+                    {
+                        stopTimer();
+                        TestWait = Visibility.Collapsed;
+                        OnPropertyChanged("TestWait");
+                    });
+            
+
+
+        }
+
+        private void startTimer()
+        {
+            m_Timer = new DispatcherTimer();
+            m_Timer.Tick += updateElapseTime;
+            m_Timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            m_StopWatch = new Stopwatch();
+            m_StopWatch.Start();
+            m_Timer.Start();
+        }
+
+        private void stopTimer()
+        {
+            m_Timer.Tick -= updateElapseTime;
+            m_Timer.Stop();
+            m_StopWatch.Stop();
+        }
+
+        private Stopwatch m_StopWatch;
+        private DispatcherTimer m_Timer;
+        private void updateElapseTime(object sender, EventArgs e)
+        {
+            ElapseTime = m_StopWatch.Elapsed.TotalSeconds.ToString("F2"); 
+            OnPropertyChanged("ElapseTime");
         }
     }
 }
