@@ -30,6 +30,6 @@ FreeEverything is released under the MIT License. See the bundled LICENSE file f
 
 ## Chang Log
 
-07/12/2013	add progress bar, spin waiter, prepare for the next async version
-07/02/2013	update to .net framework 4.5 and remove the dependency on mvvmlight
-08/24/2012	initial version
+1. 07/12/2013	add progress bar, spin waiter, prepare for the next async version
+1. 07/02/2013	update to .net framework 4.5 and remove the dependency on mvvmlight
+1. 08/24/2012	initial version
