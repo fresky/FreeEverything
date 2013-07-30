@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<GarbageCan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <FilterList>
+    <Filter>
+      <Name>Omniworks</Name>
+      <RegularExpression>^diff__dir$</RegularExpression>
+      <Include />
+      <Exclude />
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>true</ContainDirectory>
+      <IsChecked>false</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>MSTest Result</Name>
+      <RegularExpression>^TestResults$</RegularExpression>
+      <Include />
+      <Exclude />
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>true</ContainDirectory>
+      <IsChecked>false</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>Resharper</Name>
+      <RegularExpression>(^_resharper\.|\.resharper\.user$)</RegularExpression>
+      <Include />
+      <Exclude />
+      <ContainFile>true</ContainFile>
+      <ContainDirectory>true</ContainDirectory>
+      <IsChecked>false</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>Symbol</Name>
+      <RegularExpression>\.pdb$</RegularExpression>
+      <Include />
+      <Exclude>D:\NotBackedUp\symcache\,</Exclude>
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>true</ContainDirectory>
+      <IsChecked>false</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>Ncrunch</Name>
+      <RegularExpression>(.ncrunchsolution$|.ncrunchsolution.user$|.crunchsolution.cache$)</RegularExpression>
+      <Include />
+      <Exclude />
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>false</ContainDirectory>
+      <IsChecked>false</IsChecked>
+    </Filter>
+    <Filter>
+      <Name>CleanDebug</Name>
+      <RegularExpression>(^Debug$|^Release$)</RegularExpression>
+      <Include>D:\NotBackedUp\TFSWork\,</Include>
+      <Exclude />
+      <ContainFile>false</ContainFile>
+      <ContainDirectory>true</ContainDirectory>
+      <IsChecked>true</IsChecked>
+    </Filter>
+  </FilterList>
+</GarbageCan>
