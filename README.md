@@ -16,6 +16,10 @@ Download the [FreeEverything.zip] (https://github.com/fresky/FreeEverything/blob
 1. Click the "Calculate Size" button to calculate how much space taken by the checked search result.
 1. Click the "Free" button to free the checked search result.
 
+## Snapshot
+
+![screenshot](https://raw.github.com/fresky/FreeEverything/master/freeeverything.png "FreeEverything")
+
 ## Requirements
 
 Please install [.NET Framework 4.5](http://msdn.microsoft.com/library/vstudio/5a4x27ek)
@@ -30,6 +34,7 @@ FreeEverything is released under the MIT License. See the bundled LICENSE file f
 
 ## Chang Log
 
+1. 07/19/2014	using async
 1. 07/12/2013	add progress bar, spin waiter, prepare for the next async version
 1. 07/02/2013	update to .net framework 4.5 and remove the dependency on mvvmlight
 1. 08/24/2012	initial version
