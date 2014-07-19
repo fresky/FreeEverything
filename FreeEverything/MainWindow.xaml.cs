@@ -22,6 +22,13 @@ namespace FreeEverything
         public MainWindow()
         {
             InitializeComponent();
+            Dispatcher.UnhandledException += Dispatcher_UnhandledException;
+        }
+
+        void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.ToString(), "Error!", MessageBoxButton.OK);
+            e.Handled = true;
         }
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -84,11 +91,6 @@ namespace FreeEverything
         {
             m_GarbageCan.FilterList.Remove(m_GarbageCan.SelectedFilter);
             m_GarbageCan.SelectedFilter = m_GarbageCan.FilterList[0];
-        }
-
-        private void TestProgress_Click(object sender, RoutedEventArgs e)
-        {
-            m_GarbageCan.TestProgress();           
         }
     }
 }

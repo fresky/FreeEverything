@@ -1,14 +1,18 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
+using FreeEverything.Annotations;
 
 namespace FreeEverything
 {
-    public class Filter
+    public class Filter : INotifyPropertyChanged
     {
         private string m_Include;
         private string m_Exclude;
+        private Visibility m_Waiting;
 
         public Filter()
         {
@@ -65,7 +69,14 @@ namespace FreeEverything
         public bool IsChecked { get; set; }
 
         [System.Xml.Serialization.XmlIgnore]
-        public Visibility Waiting { get; set; }
+        public Visibility Waiting {
+            get { return m_Waiting; }
+            set
+            {
+                m_Waiting = value;
+                OnPropertyChanged();
+            }
+        }
 
         public override string ToString()
         {
@@ -90,6 +101,16 @@ namespace FreeEverything
             }
 
             return false;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

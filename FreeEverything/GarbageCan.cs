@@ -30,8 +30,6 @@ namespace FreeEverything
         public GarbageCan()
         {
             FilterList = new ObservableCollection<Filter>();
-            TestWait = Visibility.Collapsed;
-            OnPropertyChanged("TestWait");
         }
 
         public ObservableCollection<Filter> FilterList { get; private set; }
@@ -149,27 +147,38 @@ namespace FreeEverything
             get { return m_GarbageList.Count; }
         }
 
-        public void Scan()
+        public async void Scan()
         {
             try
             {
+                Progress = 0;
+                OnPropertyChanged("Progress");
                 startTimer();
                 GarbageList.Clear();
                 OnPropertyChanged("GarbageCount");
+                int round = 100 / FilterList.Count;
+
                 foreach (var filter in FilterList)
                 {
                     if (filter.IsChecked)
                     {
                         filter.Waiting = Visibility.Visible;
-                        OnPropertyChanged("Waiting");
-                        ScanByEverything(filter);
+                        List<Garbage> result = await Task<List<Garbage>>.Factory.StartNew(()=>ScanByEverything(filter));
+                        foreach (var garbage in result)
+                        {
+                            GarbageList.Add(garbage);
+                        }
+                        OnPropertyChanged("GarbageList");
+                        OnPropertyChanged("GarbageCount");
+
                         filter.Waiting = Visibility.Collapsed;
-                        OnPropertyChanged("Waiting");
+
+                        Progress += round;
+                        OnPropertyChanged("Progress");
                     }
                 }
-            }
-            catch (Exception)
-            {
+                Progress = 100;
+                OnPropertyChanged("Progress");
             }
             finally
             {
@@ -177,9 +186,9 @@ namespace FreeEverything
             }
         }
 
-        private void ScanByEverything(Filter filter)
+        private List<Garbage> ScanByEverything(Filter filter)
         {
-
+            List<Garbage> result = new List<Garbage>();
             EverythingWraper.Everything_SetRegex(true);
             EverythingWraper.Everything_SetSearch(filter.RegularExpression);
 
@@ -211,20 +220,24 @@ namespace FreeEverything
                 {
                     continue;
                 }
-
+                
                 Garbage garbage = new Garbage(path);
-                GarbageList.Add(garbage);
-                OnPropertyChanged("GarbageList");
-                OnPropertyChanged("GarbageCount");
+                result.Add(garbage);
             }
+            return result;
         }
 
         public void CalculateSize()
         {
+            List<Task> tasks = new List<Task>();
+            foreach (var garbage in GarbageList)
+            {
+                tasks.Add(Task.Factory.StartNew(() => garbage.CalculateSize()));
+            }
+            Task.WaitAll(tasks.ToArray());
             double size = 0;
             foreach (var garbage in GarbageList)
             {
-                garbage.CalculateSize();
                 size += garbage.Size >= 0 ? garbage.Size : 0;
             }
             TotalSize = FileHandler.GetSizeString(size);
@@ -237,20 +250,18 @@ namespace FreeEverything
 
         public void Free()
         {
+            List<string> toDelete = new List<string>();
             for (int i = GarbageList.Count-1; i >= 0; i--)
             {
                 if(GarbageList[i].IsChecked)
                 {
-                    try
-                    {
-                        FileHandler.DeletePath(GarbageList[i].Path);
-                        GarbageList.RemoveAt(i);
-                    }
-                    catch
-                    {
-                    }
+                    toDelete.Add(GarbageList[i].Path);
                 }
             }
+
+            Parallel.ForEach(toDelete, FileHandler.DeletePath);
+
+            GarbageList.Clear();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -270,36 +281,6 @@ namespace FreeEverything
         [System.Xml.Serialization.XmlIgnore]
         public string ElapseTime { get; private set; }
 
-        [System.Xml.Serialization.XmlIgnore]
-
-        public Visibility TestWait { get; private set; }
-        public void TestProgress()
-        {
-            startTimer();
-            TestWait = Visibility.Visible;
-            OnPropertyChanged("TestWait");
-
-            Task.Factory.StartNew(() =>
-                {
-                    for (int i = 1; i <= 100; i++)
-                    {
-                        int i1 = i;
-                        Task.Factory.StartNew(() => Thread.Sleep(300)).ContinueWith((antecedent) =>
-                            {
-                                Progress++;
-                                OnPropertyChanged("Progress");
-                            }, TaskContinuationOptions.AttachedToParent);
-                    }
-                }).ContinueWith(t =>
-                    {
-                        stopTimer();
-                        TestWait = Visibility.Collapsed;
-                        OnPropertyChanged("TestWait");
-                    });
-            
-
-
-        }
 
         private void startTimer()
         {

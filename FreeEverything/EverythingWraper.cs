@@ -82,7 +82,7 @@ namespace FreeEverything
         private static bool m_EverythingLaunch;
         public static void StartEverything()
         {
-            Regex regex = new Regex(@"Everything([-.0-9])");
+            Regex regex = new Regex(@"^Everything$");
             bool found = false;
             foreach (var process in Process.GetProcesses())
             {

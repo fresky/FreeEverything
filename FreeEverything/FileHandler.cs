@@ -24,18 +24,24 @@ static internal class FileHandler
 
     public static void DeleteFileSystemInfo(FileSystemInfo fsi)
     {
-
-        fsi.Attributes = FileAttributes.Normal;
-        var di = fsi as DirectoryInfo;
-
-        if (di != null)
+        try
         {
-            foreach (var dirInfo in di.GetFileSystemInfos())
+            fsi.Attributes = FileAttributes.Normal;
+            var di = fsi as DirectoryInfo;
+
+            if (di != null)
             {
-                DeleteFileSystemInfo(dirInfo);
+                foreach (var dirInfo in di.GetFileSystemInfos())
+                {
+                    DeleteFileSystemInfo(dirInfo);
+                }
             }
+            fsi.Delete();
         }
-        fsi.Delete();
+        catch (IOException)
+        {
+        }
+
     }
 
     public static string GetSizeString(double size)
