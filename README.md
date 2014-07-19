@@ -18,7 +18,7 @@ Download the [FreeEverything.zip] (https://github.com/fresky/FreeEverything/blob
 
 ## Snapshot
 
-![screenshot](https://raw.github.com/fresky/FreeEverything/master/freeeverything.png "FreeEverything")
+![Free Everything Snapshot](https://raw.githubusercontent.com/fresky/FreeEverything/master/FreeEverything.png)
 
 ## Requirements
 
